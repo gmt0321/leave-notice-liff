@@ -6,18 +6,23 @@
     name="viewport"
     content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
-  <title>請假通知測試</title>
+  <title>請假通知</title>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <style>
     :root {
       --primary: #1565c0;
+      --primary-dark: #0d47a1;
       --bg: #f4f8fc;
+      --card: #ffffff;
       --text: #263238;
       --muted: #607d8b;
-      --success: #2e7d32;
+      --border: #d9e2ec;
       --danger: #c62828;
+      --success: #2e7d32;
+      --warning-bg: #fff8e1;
+      --warning-border: #ffe082;
     }
 
     * {
@@ -38,62 +43,184 @@
     }
 
     .container {
-      width: min(100%, 620px);
+      width: min(100%, 640px);
       margin: 0 auto;
-      padding: 28px 18px;
+      padding: 20px 16px 36px;
     }
 
     .card {
-      padding: 28px 22px;
+      background: var(--card);
       border-radius: 18px;
-      background: #ffffff;
-      box-shadow: 0 8px 24px rgba(28, 73, 118, 0.12);
+      padding: 24px 20px;
+      box-shadow: 0 8px 24px rgba(28, 73, 118, 0.10);
     }
 
     h1 {
-      margin: 0 0 10px;
-      color: var(--primary);
+      margin: 0 0 8px;
+      color: var(--primary-dark);
       font-size: 24px;
       text-align: center;
     }
 
-    p {
-      margin: 0;
+    .subtitle {
+      margin: 0 0 20px;
       color: var(--muted);
-      line-height: 1.7;
       text-align: center;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .notice {
+      margin-bottom: 22px;
+      padding: 13px 14px;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 12px;
+      color: #6d5600;
+      font-size: 14px;
+      line-height: 1.65;
     }
 
     .status {
-      margin-top: 24px;
-      padding: 14px;
-      border-radius: 10px;
-      background: #eef5ff;
-      color: var(--primary);
-      font-weight: 700;
-      line-height: 1.6;
+      margin-bottom: 18px;
+      min-height: 22px;
+      color: var(--muted);
       text-align: center;
-      white-space: pre-wrap;
-    }
-
-    .status.success {
-      background: #edf8ee;
-      color: var(--success);
+      font-size: 14px;
     }
 
     .status.error {
-      background: #fff0f0;
       color: var(--danger);
+    }
+
+    .status.success {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .required {
+      color: var(--danger);
+      margin-left: 4px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .checkbox-row {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      margin: 4px 0 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #455a64;
+    }
+
+    .checkbox-row input {
+      width: auto;
+      margin-top: 3px;
+    }
+
+    .button {
+      width: 100%;
+      margin-top: 4px;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 12px;
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .button:hover {
+      background: var(--primary-dark);
+    }
+
+    .button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .success-box {
+      display: none;
+      padding: 16px;
+      border: 1px solid #b7dfba;
+      border-radius: 12px;
+      background: #f1f8f1;
+      color: #1f6b29;
+      line-height: 1.7;
+      white-space: pre-line;
+    }
+
+    .success-box.show {
+      display: block;
+    }
+
+    .form-area.hidden {
+      display: none;
+    }
+
+    .close-button {
+      display: none;
+      width: 100%;
+      margin-top: 18px;
+      padding: 12px;
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--primary);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .close-button.show {
+      display: block;
     }
 
     .debug {
       margin-top: 18px;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 10px;
       background: #f6f6f6;
-      color: #455a64;
-      font-size: 13px;
-      line-height: 1.6;
+      color: #607d8b;
+      font-size: 12px;
+      line-height: 1.55;
       white-space: pre-wrap;
       word-break: break-word;
     }
@@ -103,18 +230,110 @@
 <body>
   <main class="container">
     <section class="card">
-      <h1>請假通知測試</h1>
+      <h1>請假通知</h1>
 
-      <p>
-        正在確認 LINE 連線與使用者身分。
+      <p class="subtitle">
+        請填寫資料後送出，系統將把通知傳送至老師的官方帳號聊天室。
       </p>
+
+      <div class="notice">
+        本表單僅用於提前通知老師，並不等同完成正式請假。<br>
+        送出後，請務必再至學校校務系統完成後續請假手續。
+      </div>
 
       <div id="status" class="status">
         正在初始化 LINE……
       </div>
 
+      <div id="formArea" class="form-area">
+        <form id="leaveForm">
+          <div class="field">
+            <label for="leaveDate">
+              請假日期<span class="required">*</span>
+            </label>
+            <input id="leaveDate" type="date" required>
+          </div>
+
+          <div class="field">
+            <label for="leavePeriod">
+              請假時段<span class="required">*</span>
+            </label>
+
+            <select id="leavePeriod" required>
+              <option value="">請選擇請假時段</option>
+              <option value="整日">整日</option>
+              <option value="上午">上午</option>
+              <option value="下午">下午</option>
+              <option value="第1節">第1節</option>
+              <option value="第2節">第2節</option>
+              <option value="第3節">第3節</option>
+              <option value="第4節">第4節</option>
+              <option value="第5節">第5節</option>
+              <option value="第6節">第6節</option>
+              <option value="第7節">第7節</option>
+              <option value="其他時段">其他時段</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="studentName">
+              請假學生姓名<span class="required">*</span>
+            </label>
+            <input
+              id="studentName"
+              type="text"
+              maxlength="30"
+              placeholder="請輸入學生姓名"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="relationship">
+              填寫者身分<span class="required">*</span>
+            </label>
+
+            <select id="relationship" required>
+              <option value="">請選擇身分</option>
+              <option value="學生">學生</option>
+              <option value="家長">家長</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="reason">
+              請假事由<span class="required">*</span>
+            </label>
+
+            <textarea
+              id="reason"
+              maxlength="200"
+              placeholder="例如：身體不適，需就醫。"
+              required
+            ></textarea>
+          </div>
+
+          <label class="checkbox-row">
+            <input id="confirmCheck" type="checkbox" required>
+            <span>
+              我了解本通知不等同正式請假，仍須至校務系統完成請假手續。
+            </span>
+          </label>
+
+          <button id="submitButton" class="button" type="submit" disabled>
+            送出請假通知
+          </button>
+        </form>
+      </div>
+
+      <div id="successBox" class="success-box"></div>
+
+      <button id="closeButton" class="close-button" type="button">
+        返回 LINE 聊天室
+      </button>
+
       <div id="debug" class="debug">
-        尚未取得測試資訊。
+        尚未完成初始化。
       </div>
     </section>
   </main>
@@ -122,58 +341,44 @@
   <script>
     const LIFF_ID = '2010505245-Gf3LTtPy';
 
-    const statusElement = document.getElementById('status');
-    const debugElement = document.getElementById('debug');
+    const state = {
+      initialized: false,
+      canSendMessages: false,
+      isInClient: false
+    };
 
-    function setStatus(message, type = '') {
-      statusElement.textContent = message;
-      statusElement.className = `status ${type}`;
-    }
+    const element = {
+      status: document.getElementById('status'),
+      debug: document.getElementById('debug'),
+      formArea: document.getElementById('formArea'),
+      leaveForm: document.getElementById('leaveForm'),
+      leaveDate: document.getElementById('leaveDate'),
+      leavePeriod: document.getElementById('leavePeriod'),
+      studentName: document.getElementById('studentName'),
+      relationship: document.getElementById('relationship'),
+      reason: document.getElementById('reason'),
+      submitButton: document.getElementById('submitButton'),
+      successBox: document.getElementById('successBox'),
+      closeButton: document.getElementById('closeButton')
+    };
 
-    function setDebug(message) {
-      debugElement.textContent = message;
-    }
+    document.addEventListener('DOMContentLoaded', initializeLiff);
+    element.leaveForm.addEventListener('submit', submitLeaveNotice);
+    element.closeButton.addEventListener('click', closeLiffWindow);
 
     async function initializeLiff() {
+      element.leaveDate.value = getTodayInTaipei();
+
       try {
         setStatus('正在初始化 LINE……');
 
-        setDebug(
-          [
-            `網址：${window.location.href}`,
-            `LIFF ID：${LIFF_ID}`,
-            '開始執行 liff.init()……'
-          ].join('\n')
-        );
+        await liff.init({
+          liffId: LIFF_ID
+        });
 
-        await Promise.race([
-          liff.init({
-            liffId: LIFF_ID
-          }),
-          new Promise((_, reject) => {
-            setTimeout(() => {
-              reject(
-                new Error(
-                  'LINE 初始化逾時。請確認 LIFF ID 與 Endpoint URL 是否正確。'
-                )
-              );
-            }, 15000);
-          })
-        ]);
+        state.isInClient = liff.isInClient();
 
-        const isInClient = liff.isInClient();
-        const isLoggedIn = liff.isLoggedIn();
-
-        setDebug(
-          [
-            `網址：${window.location.href}`,
-            `LIFF ID：${LIFF_ID}`,
-            `LIFF Browser 內開啟：${isInClient ? '是' : '否'}`,
-            `LINE 已登入：${isLoggedIn ? '是' : '否'}`
-          ].join('\n')
-        );
-
-        if (!isLoggedIn) {
+        if (!liff.isLoggedIn()) {
           setStatus('正在導向 LINE 登入……');
 
           liff.login({
@@ -183,43 +388,161 @@
           return;
         }
 
-        const idToken = liff.getIDToken();
+        state.canSendMessages = liff.isApiAvailable('sendMessages');
+        state.initialized = true;
 
-        if (!idToken) {
+        if (!state.canSendMessages) {
           throw new Error(
-            'LIFF 已完成初始化，但無法取得 ID Token。請確認 LIFF scope 已勾選 openid。'
+            '目前無法將通知傳送到聊天室。請從官方帳號聊天室或圖文選單重新開啟本頁。'
           );
         }
 
-        setStatus(
-          '已完成 LINE 初始化與身分驗證。',
-          'success'
+        element.submitButton.disabled = false;
+
+        setStatus('已完成 LINE 身分驗證，可填寫請假通知。', 'success');
+
+        setDebug(
+          [
+            `LIFF Browser 內開啟：${state.isInClient ? '是' : '否'}`,
+            `可傳送聊天室訊息：${state.canSendMessages ? '是' : '否'}`,
+            `目前網址：${window.location.href}`
+          ].join('\n')
         );
 
       } catch (error) {
         console.error(error);
 
-        const message =
-          error && error.message
-            ? error.message
-            : String(error);
+        const message = error && error.message
+          ? error.message
+          : String(error);
 
-        setStatus(
-          `LINE 初始化失敗：${message}`,
-          'error'
-        );
+        setStatus(`LINE 初始化失敗：${message}`, 'error');
 
         setDebug(
           [
-            `網址：${window.location.href}`,
             `LIFF ID：${LIFF_ID}`,
-            `錯誤：${message}`
+            `錯誤：${message}`,
+            `目前網址：${window.location.href}`
           ].join('\n')
         );
       }
     }
 
-    initializeLiff();
+    async function submitLeaveNotice(event) {
+      event.preventDefault();
+
+      if (!state.initialized || !state.canSendMessages) {
+        setStatus(
+          '尚未完成 LINE 連線，請從官方帳號聊天室重新開啟本頁。',
+          'error'
+        );
+        return;
+      }
+
+      const leaveDate = element.leaveDate.value.trim();
+      const leavePeriod = element.leavePeriod.value.trim();
+      const studentName = element.studentName.value.trim();
+      const relationship = element.relationship.value.trim();
+      const reason = normalizeText(element.reason.value);
+
+      if (!leaveDate || !leavePeriod || !studentName || !relationship || !reason) {
+        setStatus('請完整填寫所有必填欄位。', 'error');
+        return;
+      }
+
+      const message = [
+        '【請假通知】',
+        `請假日期：${leaveDate}`,
+        `請假時段：${leavePeriod}`,
+        `學生姓名：${studentName}`,
+        `填寫者身分：${relationship}`,
+        `請假事由：${reason}`,
+        '',
+        '請務必至校務系統完成正式請假手續。'
+      ].join('\n');
+
+      try {
+        setSubmitting(true);
+        setStatus('正在傳送請假通知……');
+
+        await liff.sendMessages([
+          {
+            type: 'text',
+            text: message
+          }
+        ]);
+
+        element.formArea.classList.add('hidden');
+
+        element.successBox.textContent = [
+          '請假通知已傳送至老師的官方帳號聊天室。',
+          '',
+          '請務必再至校務系統完成正式請假手續。'
+        ].join('\n');
+
+        element.successBox.classList.add('show');
+        element.closeButton.classList.add('show');
+
+        setStatus('通知已送出。', 'success');
+
+      } catch (error) {
+        console.error(error);
+
+        const messageText = error && error.message
+          ? error.message
+          : String(error);
+
+        setStatus(
+          `通知傳送失敗：${messageText}`,
+          'error'
+        );
+
+        setSubmitting(false);
+      }
+    }
+
+    function setSubmitting(isSubmitting) {
+      element.submitButton.disabled = isSubmitting;
+      element.submitButton.textContent = isSubmitting
+        ? '傳送中……'
+        : '送出請假通知';
+    }
+
+    function setStatus(message, type = '') {
+      element.status.textContent = message;
+      element.status.className = `status ${type}`;
+    }
+
+    function setDebug(message) {
+      element.debug.textContent = message;
+    }
+
+    function closeLiffWindow() {
+      if (liff.isInClient()) {
+        liff.closeWindow();
+        return;
+      }
+
+      window.close();
+    }
+
+    function normalizeText(value) {
+      return String(value || '')
+        .replace(/[\r\n\t]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function getTodayInTaipei() {
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Taipei',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+
+      return formatter.format(new Date());
+    }
   </script>
 </body>
 </html>
