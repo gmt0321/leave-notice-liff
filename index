@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+  <title>請假通知測試</title>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+  <style>
+    :root {
+      --primary: #1565c0;
+      --bg: #f4f8fc;
+      --text: #263238;
+      --muted: #607d8b;
+      --success: #2e7d32;
+      --danger: #c62828;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Microsoft JhengHei",
+        sans-serif;
+    }
+
+    .container {
+      width: min(100%, 620px);
+      margin: 0 auto;
+      padding: 28px 18px;
+    }
+
+    .card {
+      padding: 28px 22px;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 8px 24px rgba(28, 73, 118, 0.12);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      color: var(--primary);
+      font-size: 24px;
+      text-align: center;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .status {
+      margin-top: 24px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #eef5ff;
+      color: var(--primary);
+      font-weight: 700;
+      line-height: 1.6;
+      text-align: center;
+      white-space: pre-wrap;
+    }
+
+    .status.success {
+      background: #edf8ee;
+      color: var(--success);
+    }
+
+    .status.error {
+      background: #fff0f0;
+      color: var(--danger);
+    }
+
+    .debug {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f6f6f6;
+      color: #455a64;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>請假通知測試</h1>
+
+      <p>
+        正在確認 LINE 連線與使用者身分。
+      </p>
+
+      <div id="status" class="status">
+        正在初始化 LINE……
+      </div>
+
+      <div id="debug" class="debug">
+        尚未取得測試資訊。
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const LIFF_ID = 'YOUR_LIFF_ID';
+
+    const statusElement = document.getElementById('status');
+    const debugElement = document.getElementById('debug');
+
+    function setStatus(message, type = '') {
+      statusElement.textContent = message;
+      statusElement.className = `status ${type}`;
+    }
+
+    function setDebug(message) {
+      debugElement.textContent = message;
+    }
+
+    async function initializeLiff() {
+      try {
+        setStatus('正在初始化 LINE……');
+
+        setDebug(
+          [
+            `網址：${window.location.href}`,
+            `LIFF ID：${LIFF_ID}`,
+            '開始執行 liff.init()……'
+          ].join('\n')
+        );
+
+        await Promise.race([
+          liff.init({
+            liffId: LIFF_ID
+          }),
+          new Promise((_, reject) => {
+            setTimeout(() => {
+              reject(
+                new Error(
+                  'LINE 初始化逾時。請確認 LIFF ID 與 Endpoint URL 是否正確。'
+                )
+              );
+            }, 15000);
+          })
+        ]);
+
+        const isInClient = liff.isInClient();
+        const isLoggedIn = liff.isLoggedIn();
+
+        setDebug(
+          [
+            `網址：${window.location.href}`,
+            `LIFF ID：${LIFF_ID}`,
+            `LIFF Browser 內開啟：${isInClient ? '是' : '否'}`,
+            `LINE 已登入：${isLoggedIn ? '是' : '否'}`
+          ].join('\n')
+        );
+
+        if (!isLoggedIn) {
+          setStatus('正在導向 LINE 登入……');
+
+          liff.login({
+            redirectUri: window.location.href
+          });
+
+          return;
+        }
+
+        const idToken = liff.getIDToken();
+
+        if (!idToken) {
+          throw new Error(
+            'LIFF 已完成初始化，但無法取得 ID Token。請確認 LIFF scope 已勾選 openid。'
+          );
+        }
+
+        setStatus(
+          '已完成 LINE 初始化與身分驗證。',
+          'success'
+        );
+
+      } catch (error) {
+        console.error(error);
+
+        const message =
+          error && error.message
+            ? error.message
+            : String(error);
+
+        setStatus(
+          `LINE 初始化失敗：${message}`,
+          'error'
+        );
+
+        setDebug(
+          [
+            `網址：${window.location.href}`,
+            `LIFF ID：${LIFF_ID}`,
+            `錯誤：${message}`
+          ].join('\n')
+        );
+      }
+    }
+
+    initializeLiff();
+  </script>
+</body>
+</html>
