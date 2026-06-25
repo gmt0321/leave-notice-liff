@@ -140,6 +140,58 @@
       line-height: 1.55;
     }
 
+    .leave-type-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .leave-type-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .leave-type-option:has(input:checked) {
+      border-color: var(--primary);
+      background: #eef6ff;
+    }
+
+    .leave-type-option input {
+      width: auto;
+      margin: 0;
+    }
+
+    .conditional-area {
+      display: none;
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid #dbe8f4;
+      border-radius: 12px;
+      background: #f8fbff;
+    }
+
+    .conditional-area.show {
+      display: block;
+    }
+
+    .period-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .period-row span {
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
     .checkbox-row {
       display: flex;
       gap: 9px;
@@ -213,16 +265,25 @@
       display: block;
     }
 
-    .debug {
-      margin-top: 18px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      background: #f6f6f6;
-      color: #607d8b;
-      font-size: 12px;
+    .help-text {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
       line-height: 1.55;
-      white-space: pre-wrap;
-      word-break: break-word;
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 22px 16px;
+      }
+
+      .period-row {
+        grid-template-columns: 1fr;
+      }
+
+      .period-row span {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -256,24 +317,87 @@
           </div>
 
           <div class="field">
-            <label for="leavePeriod">
-              請假時段<span class="required">*</span>
+            <label>
+              請假方式<span class="required">*</span>
             </label>
 
-            <select id="leavePeriod" required>
-              <option value="">請選擇請假時段</option>
-              <option value="整日">整日</option>
-              <option value="上午">上午</option>
-              <option value="下午">下午</option>
-              <option value="第1節">第1節</option>
-              <option value="第2節">第2節</option>
-              <option value="第3節">第3節</option>
-              <option value="第4節">第4節</option>
-              <option value="第5節">第5節</option>
-              <option value="第6節">第6節</option>
-              <option value="第7節">第7節</option>
-              <option value="其他時段">其他時段</option>
-            </select>
+            <div class="leave-type-list">
+              <label class="leave-type-option">
+                <input
+                  type="radio"
+                  name="leaveType"
+                  value="全天"
+                  checked
+                >
+                全天
+              </label>
+
+              <label class="leave-type-option">
+                <input
+                  type="radio"
+                  name="leaveType"
+                  value="半天"
+                >
+                半天
+              </label>
+
+              <label class="leave-type-option">
+                <input
+                  type="radio"
+                  name="leaveType"
+                  value="節次"
+                >
+                指定節次
+              </label>
+            </div>
+
+            <div id="halfDayArea" class="conditional-area">
+              <label for="halfDayPeriod">
+                請選擇時段<span class="required">*</span>
+              </label>
+
+              <select id="halfDayPeriod">
+                <option value="">請選擇上午或下午</option>
+                <option value="上午">上午</option>
+                <option value="下午">下午</option>
+              </select>
+            </div>
+
+            <div id="classPeriodArea" class="conditional-area">
+              <label>
+                請假節次<span class="required">*</span>
+              </label>
+
+              <div class="period-row">
+                <select id="startPeriod">
+                  <option value="">起始節次</option>
+                  <option value="1">第 1 節</option>
+                  <option value="2">第 2 節</option>
+                  <option value="3">第 3 節</option>
+                  <option value="4">第 4 節</option>
+                  <option value="5">第 5 節</option>
+                  <option value="6">第 6 節</option>
+                  <option value="7">第 7 節</option>
+                </select>
+
+                <span>至</span>
+
+                <select id="endPeriod">
+                  <option value="">結束節次</option>
+                  <option value="1">第 1 節</option>
+                  <option value="2">第 2 節</option>
+                  <option value="3">第 3 節</option>
+                  <option value="4">第 4 節</option>
+                  <option value="5">第 5 節</option>
+                  <option value="6">第 6 節</option>
+                  <option value="7">第 7 節</option>
+                </select>
+              </div>
+
+              <p class="help-text">
+                例如選擇第 2 節至第 4 節，通知內容會顯示為「第 2 節至第 4 節」。
+              </p>
+            </div>
           </div>
 
           <div class="field">
@@ -333,10 +457,6 @@
       <button id="closeButton" class="close-button" type="button">
         返回 LINE 聊天室
       </button>
-
-      <div id="debug" class="debug">
-        尚未完成初始化。
-      </div>
     </section>
   </main>
 
@@ -350,11 +470,14 @@
 
     const element = {
       status: document.getElementById('status'),
-      debug: document.getElementById('debug'),
       formArea: document.getElementById('formArea'),
       leaveForm: document.getElementById('leaveForm'),
       leaveDate: document.getElementById('leaveDate'),
-      leavePeriod: document.getElementById('leavePeriod'),
+      halfDayArea: document.getElementById('halfDayArea'),
+      classPeriodArea: document.getElementById('classPeriodArea'),
+      halfDayPeriod: document.getElementById('halfDayPeriod'),
+      startPeriod: document.getElementById('startPeriod'),
+      endPeriod: document.getElementById('endPeriod'),
       studentName: document.getElementById('studentName'),
       relationship: document.getElementById('relationship'),
       reason: document.getElementById('reason'),
@@ -364,11 +487,17 @@
     };
 
     document.addEventListener('DOMContentLoaded', initializeLiff);
+
     element.leaveForm.addEventListener('submit', submitLeaveNotice);
     element.closeButton.addEventListener('click', closeLiffWindow);
 
+    document.querySelectorAll('input[name="leaveType"]').forEach(function(radio) {
+      radio.addEventListener('change', updateLeaveTypeFields);
+    });
+
     async function initializeLiff() {
       element.leaveDate.value = getTodayInTaipei();
+      updateLeaveTypeFields();
 
       try {
         setStatus('正在初始化 LINE……');
@@ -400,14 +529,6 @@
 
         setStatus('已完成 LINE 身分驗證，可填寫請假通知。', 'success');
 
-        setDebug(
-          [
-            `LIFF Browser 內開啟：${state.isInClient ? '是' : '否'}`,
-            `LINE 已登入：${liff.isLoggedIn() ? '是' : '否'}`,
-            `目前網址：${window.location.href}`
-          ].join('\n')
-        );
-
       } catch (error) {
         console.error(error);
 
@@ -416,14 +537,29 @@
           : String(error);
 
         setStatus(`LINE 初始化失敗：${message}`, 'error');
+      }
+    }
 
-        setDebug(
-          [
-            `LIFF ID：${LIFF_ID}`,
-            `錯誤：${message}`,
-            `目前網址：${window.location.href}`
-          ].join('\n')
-        );
+    function updateLeaveTypeFields() {
+      const leaveType = getSelectedLeaveType();
+
+      element.halfDayArea.classList.toggle(
+        'show',
+        leaveType === '半天'
+      );
+
+      element.classPeriodArea.classList.toggle(
+        'show',
+        leaveType === '節次'
+      );
+
+      if (leaveType !== '半天') {
+        element.halfDayPeriod.value = '';
+      }
+
+      if (leaveType !== '節次') {
+        element.startPeriod.value = '';
+        element.endPeriod.value = '';
       }
     }
 
@@ -439,7 +575,7 @@
       }
 
       const leaveDate = element.leaveDate.value.trim();
-      const leavePeriod = element.leavePeriod.value.trim();
+      const leavePeriod = getLeavePeriodText();
       const studentName = element.studentName.value.trim();
       const relationship = element.relationship.value.trim();
       const reason = normalizeText(element.reason.value);
@@ -476,6 +612,7 @@
         element.successBox.textContent = [
           '請假通知已傳送至老師的官方帳號聊天室。',
           '',
+          '官方帳號將回覆確認訊息。',
           '請務必再至校務系統完成正式請假手續。'
         ].join('\n');
 
@@ -500,6 +637,53 @@
       }
     }
 
+    function getSelectedLeaveType() {
+      const selected = document.querySelector(
+        'input[name="leaveType"]:checked'
+      );
+
+      return selected ? selected.value : '';
+    }
+
+    function getLeavePeriodText() {
+      const leaveType = getSelectedLeaveType();
+
+      if (leaveType === '全天') {
+        return '全天';
+      }
+
+      if (leaveType === '半天') {
+        const halfDayPeriod = element.halfDayPeriod.value.trim();
+
+        return halfDayPeriod
+          ? `${halfDayPeriod}（半天）`
+          : '';
+      }
+
+      if (leaveType === '節次') {
+        const startPeriod = Number(element.startPeriod.value);
+        const endPeriod = Number(element.endPeriod.value);
+
+        if (!startPeriod || !endPeriod) {
+          setStatus('請選擇請假的起始節次與結束節次。', 'error');
+          return '';
+        }
+
+        if (startPeriod > endPeriod) {
+          setStatus('起始節次不可晚於結束節次。', 'error');
+          return '';
+        }
+
+        if (startPeriod === endPeriod) {
+          return `第 ${startPeriod} 節`;
+        }
+
+        return `第 ${startPeriod} 節至第 ${endPeriod} 節`;
+      }
+
+      return '';
+    }
+
     function setSubmitting(isSubmitting) {
       element.submitButton.disabled = isSubmitting;
       element.submitButton.textContent = isSubmitting
@@ -510,10 +694,6 @@
     function setStatus(message, type = '') {
       element.status.textContent = message;
       element.status.className = `status ${type}`;
-    }
-
-    function setDebug(message) {
-      element.debug.textContent = message;
     }
 
     function closeLiffWindow() {
