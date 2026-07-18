@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>傳訊息給老師</title>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f5f5f5;
+      color: #222;
+      line-height: 1.7;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px 16px 32px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 1.5rem;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .notice {
+      background: #f8f9fb;
+      border-left: 5px solid #4a6cf7;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    .notice p {
+      margin: 0 0 12px;
+    }
+
+    .notice p:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      line-height: 1.6;
+      resize: vertical;
+      font-family: inherit;
+      background: #fff;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #4a6cf7;
+      box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.15);
+    }
+
+    .hint {
+      margin-top: 8px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 999px;
+      background: #06c755;
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      display: none;
+      font-size: 0.95rem;
+    }
+
+    .status.success {
+      display: block;
+      background: #e8f7ee;
+      color: #176b35;
+    }
+
+    .status.error {
+      display: block;
+      background: #fdecec;
+      color: #a12828;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <section class="card">
+      <h1>傳訊息給老師</h1>
+
+      <div class="notice">
+        <p>
+          姜焙元老師的官方帳號訊息回應時間為上課日 08:00–17:00。
+          非回應時間、例假日及休假期間，老師可能視情況查看或回覆訊息，
+          但不保證即時回覆；一般訊息原則上將於下一個回應時間內依序處理，
+          敬請見諒。
+        </p>
+
+        <p>
+          如有緊急事項，請於週一至週五 08:00–16:30 撥打臺南女中數學科辦公室電話：
+          <br />
+          (06) 213-1928 分機 123。
+        </p>
+
+        <p>
+          如有需要較長時間討論的事項，請先於本聊天室留言，
+          老師將於回應時間內協助安排適當的面談時間。
+        </p>
+      </div>
+
+      <label for="messageInput">請輸入想傳給老師的訊息</label>
+
+      <textarea
+        id="messageInput"
+        placeholder="請在這裡輸入想傳給老師的訊息……"
+      ></textarea>
+
+      <div class="hint">
+        送出後，訊息會出現在本 LINE 官方帳號聊天室中。
+      </div>
+
+      <button id="sendButton" type="button" disabled>
+        LIFF 初始化中……
+      </button>
+
+      <div id="statusBox" class="status"></div>
+    </section>
+  </main>
+
+  <script>
+    const LIFF_ID = '請填入你的 LIFF ID';
+
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const statusBox = document.getElementById('statusBox');
+
+    function showStatus(type, text) {
+      statusBox.className = 'status ' + type;
+      statusBox.textContent = text;
+    }
+
+    async function initializeLiff() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+
+        if (!liff.isInClient()) {
+          sendButton.disabled = true;
+          sendButton.textContent = '請從 LINE 官方帳號中開啟此頁面';
+          showStatus(
+            'error',
+            '此功能需要從 LINE 官方帳號的圖文選單中開啟，才能送出訊息。'
+          );
+          return;
+        }
+
+        sendButton.disabled = false;
+        sendButton.textContent = '送出訊息';
+      } catch (error) {
+        console.error(error);
+        sendButton.disabled = true;
+        sendButton.textContent = 'LIFF 初始化失敗';
+        showStatus('error', 'LIFF 初始化失敗，請稍後再試。');
+      }
+    }
+
+    async function sendMessageToTeacher() {
+      const userMessage = messageInput.value.trim();
+
+      if (!userMessage) {
+        showStatus('error', '請先輸入想傳給老師的訊息。');
+        return;
+      }
+
+      const lineMessage = `【傳訊息給老師】
+
+${userMessage}`;
+
+      try {
+        sendButton.disabled = true;
+        sendButton.textContent = '送出中……';
+
+        await liff.sendMessages([
+          {
+            type: 'text',
+            text: lineMessage
+          }
+        ]);
+
+        showStatus('success', '訊息已送出，老師將於回應時間內依序處理。');
+        messageInput.value = '';
+
+        sendButton.textContent = '已送出';
+
+        setTimeout(() => {
+          if (liff.isInClient()) {
+            liff.closeWindow();
+          }
+        }, 1200);
+      } catch (error) {
+        console.error(error);
+        sendButton.disabled = false;
+        sendButton.textContent = '送出訊息';
+        showStatus('error', '訊息送出失敗，請稍後再試。');
+      }
+    }
+
+    sendButton.addEventListener('click', sendMessageToTeacher);
+
+    initializeLiff();
+  </script>
+</body>
+</html>
