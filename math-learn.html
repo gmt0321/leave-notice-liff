@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>數學學習諮詢</title>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f5f5f5;
+      color: #222;
+      line-height: 1.7;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px 16px 32px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 1.5rem;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .notice {
+      background: #f8f9fb;
+      border-left: 5px solid #4a6cf7;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    .notice p {
+      margin: 0 0 12px;
+    }
+
+    .notice p:last-child {
+      margin-bottom: 0;
+    }
+
+    .notice ul {
+      margin: 6px 0 14px 1.2em;
+      padding: 0;
+    }
+
+    .notice li {
+      margin-bottom: 4px;
+    }
+
+    .photo-reminder {
+      background: #fff8e6;
+      border-left: 5px solid #f2b705;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      font-size: 0.98rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      line-height: 1.6;
+      resize: vertical;
+      font-family: inherit;
+      background: #fff;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #4a6cf7;
+      box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.15);
+    }
+
+    .hint {
+      margin-top: 8px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 999px;
+      background: #06c755;
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      display: none;
+      font-size: 0.95rem;
+    }
+
+    .status.success {
+      display: block;
+      background: #e8f7ee;
+      color: #176b35;
+    }
+
+    .status.error {
+      display: block;
+      background: #fdecec;
+      color: #a12828;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <section class="card">
+      <h1>數學學習諮詢</h1>
+
+      <div class="notice">
+        <p>
+          你好，若你有數學問題想請老師協助，請先依照以下方式整理後再傳送訊息：
+        </p>
+
+        <ul>
+          <li>附上完整、清楚的題目照片。</li>
+          <li>說明目前已經做到哪一步。</li>
+          <li>告訴老師卡住或不理解的地方。</li>
+          <li>請避免只傳「這題怎麼寫」或「老師救我」。</li>
+        </ul>
+
+        <p>老師可以協助的範圍包括：</p>
+
+        <ul>
+          <li>課堂內容的觀念說明。</li>
+          <li>解題方向或思考方式的提示。</li>
+          <li>確認您自己的解法是否正確。</li>
+          <li>說明某一步推導為什麼成立。</li>
+        </ul>
+
+        <p>
+          老師不會直接代寫整份作業，也不提供只有答案、沒有思考過程的協助。
+          訊息將於本帳號公告的回應時間內依序處理；非回應時間、例假日及休假期間，
+          老師可能視情況查看或回覆，但不保證即時回覆，請同學耐心等候。
+          謝謝您的配合。
+        </p>
+      </div>
+
+      <div class="photo-reminder">
+        若需要附上題目照片，請先送出下方文字說明；送出後回到 LINE 聊天室，再直接傳送完整、清楚的題目照片。
+      </div>
+
+      <label for="questionInput">請輸入想詢問的數學問題</label>
+
+      <textarea
+        id="questionInput"
+        placeholder="例如：老師您好，圖片中的第三題解答我看不太懂。我目前已經做到……，但卡在……"
+      ></textarea>
+
+      <div class="hint">
+        送出後，文字訊息會出現在本 LINE 官方帳號聊天室中。若有題目照片，請接著在聊天室補傳圖片。
+      </div>
+
+      <button id="sendButton" type="button" disabled>
+        LIFF 初始化中……
+      </button>
+
+      <div id="statusBox" class="status"></div>
+    </section>
+  </main>
+
+  <script>
+    const LIFF_ID = '2010505245-Gf3LTtPy';
+
+    const questionInput = document.getElementById('questionInput');
+    const sendButton = document.getElementById('sendButton');
+    const statusBox = document.getElementById('statusBox');
+
+    function showStatus(type, text) {
+      statusBox.className = 'status ' + type;
+      statusBox.textContent = text;
+    }
+
+    async function initializeLiff() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+
+        if (!liff.isInClient()) {
+          sendButton.disabled = true;
+          sendButton.textContent = '請從 LINE 官方帳號中開啟此頁面';
+          showStatus(
+            'error',
+            '此功能需要從 LINE 官方帳號的圖文選單中開啟，才能送出訊息。'
+          );
+          return;
+        }
+
+        sendButton.disabled = false;
+        sendButton.textContent = '送出數學問題';
+      } catch (error) {
+        console.error(error);
+        sendButton.disabled = true;
+        sendButton.textContent = 'LIFF 初始化失敗';
+        showStatus('error', 'LIFF 初始化失敗，請稍後再試。');
+      }
+    }
+
+    async function sendMathQuestion() {
+      const userQuestion = questionInput.value.trim();
+
+      if (!userQuestion) {
+        showStatus('error', '請先輸入想詢問的數學問題。');
+        return;
+      }
+
+      const lineMessage = `【數學學習諮詢】
+
+${userQuestion}
+
+※ 若有題目照片，請接著直接在本聊天室傳送完整、清楚的圖片。`;
+
+      try {
+        sendButton.disabled = true;
+        sendButton.textContent = '送出中……';
+
+        await liff.sendMessages([
+          {
+            type: 'text',
+            text: lineMessage
+          }
+        ]);
+
+        showStatus(
+          'success',
+          '文字訊息已送出。若有題目照片，請回到聊天室後接著傳送圖片。'
+        );
+
+        questionInput.value = '';
+        sendButton.textContent = '已送出';
+
+        setTimeout(() => {
+          if (liff.isInClient()) {
+            liff.closeWindow();
+          }
+        }, 1800);
+      } catch (error) {
+        console.error(error);
+        sendButton.disabled = false;
+        sendButton.textContent = '送出數學問題';
+        showStatus('error', '訊息送出失敗，請稍後再試。');
+      }
+    }
+
+    sendButton.addEventListener('click', sendMathQuestion);
+
+    initializeLiff();
+  </script>
+</body>
+</html>
