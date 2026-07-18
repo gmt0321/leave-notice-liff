@@ -508,16 +508,6 @@
 
         state.isInClient = liff.isInClient();
 
-        if (!liff.isLoggedIn()) {
-          setStatus('正在導向 LINE 登入……');
-
-          liff.login({
-            redirectUri: window.location.href
-          });
-
-          return;
-        }
-
         if (!state.isInClient) {
           throw new Error(
             '請從官方帳號聊天室或圖文選單開啟本頁，才能將請假通知傳送到聊天室。'
@@ -527,7 +517,7 @@
         state.initialized = true;
         element.submitButton.disabled = false;
 
-        setStatus('已完成 LINE 身分驗證，可填寫請假通知。', 'success');
+        setStatus('已完成 LINE 連線，可填寫請假通知。', 'success');
 
       } catch (error) {
         console.error(error);
